@@ -15,7 +15,6 @@ def get_endpoints(api_url):
         response = requests.get(api_url)
         if response.status_code == 200:
             data = response.json()
-
             return list(data.keys())
         else:
             return f"fetching endpoints of API is failed: {response.status_code}"
@@ -23,9 +22,7 @@ def get_endpoints(api_url):
         return f"It is failed: {e}"
 
 
-
-
-def get_api_request_url(prompt,max_tokens=80):
+def get_api_request_url(prompt,max_tokens=100):
     try:
         response_AI = client.chat.completions.create(
             model=model,
@@ -33,7 +30,7 @@ def get_api_request_url(prompt,max_tokens=80):
             messages=[
                 {
                     "role": "system",
-                    "content": f"User gave API URL is {user_api_url} and API endpoints: {endpoints} . Please just provide API request URL. Do not write anything else"
+                    "content": f"User gave API URL is {user_api_url} and API endpoints: {endpoints} . Please just provide API request URL according to given prompt from user. Do not write anything else"
                 },
                 {
                     "role": "user",
@@ -63,11 +60,10 @@ def send_request(request_api_url):
 
 
 
-def get_response_from_ai(prompt,max_tokens=80):
+def get_response_from_ai(prompt,max_tokens=200):
     request_api_url = get_api_request_url(prompt,max_tokens)
     print(request_api_url, "request_api_url")
     response_data = send_request(request_api_url)
-    # print(response_data, "response_data")
     try:
         response_AI = client.chat.completions.create(
             model=model,
@@ -75,10 +71,9 @@ def get_response_from_ai(prompt,max_tokens=80):
             messages=[
                 {
                     "role": "system",
-                    "content": f"Can you analyse the data what I give: {response_data} and according to this data, please answer the question: {prompt} ."
-                               f"Please now give the answer in format which is given:"
-                               f"Answer: Here should be understandable response for a human"
-                },
+                    "content": f"You will receive a dataset called {response_data} and a question called {prompt}. Your task is to analyze the dataset and provide a direct answer to the question based on the data. The response should be as concise as possible, and include only the relevant answer. If the data does not provide the information needed to answer the question, respond with 'Data not found'. Avoid any unnecessary explanation or additional information."
+                }
+
             ]
         )
 
