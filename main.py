@@ -10,16 +10,16 @@ client = OpenAI(
 
 model="gpt-4o-mini"
 
-def get_endpoints(api_url):
-    try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            data = response.json()
-            return list(data.keys())
-        else:
-            return f"fetching endpoints of API is failed: {response.status_code}"
-    except Exception as e:
-        return f"It is failed: {e}"
+# def get_endpoints(api_url):
+#     try:
+#         response = requests.get(api_url)
+#         if response.status_code == 200:
+#             data = response.json()
+#             return list(data.keys())
+#         else:
+#             return f"fetching endpoints of API is failed: {response.status_code}"
+#     except Exception as e:
+#         return f"It is failed: {e}"
 
 
 def get_api_request_url(prompt,max_tokens=100):
@@ -30,7 +30,7 @@ def get_api_request_url(prompt,max_tokens=100):
             messages=[
                 {
                     "role": "system",
-                    "content": f"User gave API URL is {user_api_url} and API endpoints: {endpoints} . Please just provide API request URL according to given prompt from user. Do not write anything else"
+                    "content": f"User gave an API documentation URL which is {user_api_url} . Please analyze all endpoints in this documentation and after that just provide API request URL according to given prompt from user ( If there are parameters which should be filled, then fill them randomly ). Do not write anything else."
                 },
                 {
                     "role": "user",
@@ -38,7 +38,6 @@ def get_api_request_url(prompt,max_tokens=100):
                 }
             ]
         )
-
 
         return response_AI.choices[0].message.content
 
@@ -77,7 +76,6 @@ def get_response_from_ai(prompt,max_tokens=200):
             ]
         )
 
-
         return response_AI.choices[0].message.content
 
     except Exception as e:
@@ -87,7 +85,7 @@ def get_response_from_ai(prompt,max_tokens=200):
 
 user_api_url = input("Please tell me the API Url: ")
 
-endpoints = get_endpoints(user_api_url)
+# endpoints = get_endpoints(user_api_url)
 
 user_input = input("Tell me what you want to know: ")
 
